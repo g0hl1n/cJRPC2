@@ -7,9 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define REQ_STR1 "{\"jsonrpc\":\"2.0\", \"method\":\"get-version\", \"id\":42}"
-#define REQ_STR2 "{\"jsonrpc\":\"2.0\", \"method\":\"echo\", \"params\":\"foo\", \"id\":1337}"
-
 int impl_get_version(const cJSON *params, cJSON **resp)
 {
 	(void)params; /* unused */
