@@ -68,7 +68,8 @@ void cjrpc2_free_handler(struct cjrpc2_handler *h);
  * @brief handle an incoming JSONRPC2.0 request
  * @param h handler to use
  * @param req request string
- * @retval JSONRPC2.0 response string on success
+ * @retval JSONRPC2.0 response string on success (must be free()' by the caller)
+ * @retval emtpy string on notification request (must be free()' by the caller)
  * @retval NULL on error
  * @retval errno EINVAL or ENOMEM on error
  */

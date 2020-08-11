@@ -248,12 +248,10 @@ char *cjrpc2_handle_request(struct cjrpc2_handler *h, const char *req)
 	}
 
 	j_id = cJSON_DetachItemFromObject(j_req, "id");
-	if (!j_id) {
-		j_id = cJSON_CreateNull();
-	}
 	j_params = cJSON_GetObjectItem(j_req, "params");
 
 	/* find function & execute */
+	j_resp = NULL;
 	me = h->mlist_head;
 	while (me) {
 		if (strcmp(me->method->name, j_method->valuestring)) {
@@ -261,17 +259,33 @@ char *cjrpc2_handle_request(struct cjrpc2_handler *h, const char *req)
 			continue;
 		}
 		if (me->method->func(j_params, &j_result) == CJRPC2_RET_SUCCESS) {
-			j_resp = cjrpc2_create_response(j_result, j_id);
+			if (j_id) {
+				j_resp = cjrpc2_create_response(j_result, j_id);
+			}
 			goto exit_ret;
 		}
-		j_resp = cjrpc2_create_response_error2(j_result, j_id);
+		if (j_id) {
+			j_resp = cjrpc2_create_response_error2(j_result, j_id);
+		}
 		goto exit_ret;
 	}
-	j_resp = cjrpc2_create_response_error(JSONRPC2_ENOMET, "method not found", NULL, j_id);
+	if (j_id) {
+		j_resp = cjrpc2_create_response_error(JSONRPC2_ENOMET, "method not found", NULL, j_id);
+	}
 
 exit_ret:
-	ret = cJSON_PrintUnformatted(j_resp);
+	if (j_resp) {
+		ret = cJSON_PrintUnformatted(j_resp);
+		cJSON_Delete(j_resp);
+	} else {
+		/* notification */
+		ret = (char *)malloc(1);
+		if (!ret) {
+			/* errno set by malloc() */
+			return NULL;
+		}
+		*ret = '\0';
+	}
 	cJSON_Delete(j_req);
-	cJSON_Delete(j_resp);
 	return ret;
 }
