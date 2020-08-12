@@ -270,7 +270,8 @@ char *cjrpc2_handle_request(struct cjrpc2_handler *h, const char *req)
 		goto exit_ret;
 	}
 	if (j_id) {
-		j_resp = cjrpc2_create_response_error(JSONRPC2_ENOMET, "method not found", NULL, j_id);
+		j_resp = cjrpc2_create_response_error(JSONRPC2_ENOMET, "method not found", NULL,
+						      j_id);
 	}
 
 exit_ret:
