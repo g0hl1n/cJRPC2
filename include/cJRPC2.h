@@ -58,6 +58,17 @@ struct cjrpc2_handler *cjrpc2_new_handler(struct cjrpc2_method *methods);
 
 /**
  * @fn
+ * @brief create a new cJRPC2 handler with multiple cjrpc2_method arrays
+ * @param count number of cjrpc2_method arrays to follow
+ * @param ... count number of NULL terminated array of methods to register
+ * @retval new handler instance on success
+ * @retval NULL on error
+ * @retval errno EINVAL or ENOMEN on error
+ */
+struct cjrpc2_handler *cjrpc2_new_handler_m(size_t count, ...);
+
+/**
+ * @fn
  * @brief free a existing cJRPC2 handler
  * @param h handler to free
  */

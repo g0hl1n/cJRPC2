@@ -33,3 +33,10 @@ executable('example-minimal',
     cjrpc2_dep,
   ],
 )
+
+executable('example-multiple',
+  'examples/multiple.c',
+  dependencies: [
+    cjrpc2_dep,
+  ],
+)
