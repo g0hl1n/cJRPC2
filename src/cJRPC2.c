@@ -4,6 +4,7 @@
 #include "cJSON/cJSON.h"
 
 #include <errno.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -162,11 +163,18 @@ const char *cjrpc2_version(void)
 
 struct cjrpc2_handler *cjrpc2_new_handler(struct cjrpc2_method *methods)
 {
-	struct cjrpc2_handler *h;
-	struct cjrpc2_method_entry *me;
-	unsigned int i;
+	return cjrpc2_new_handler_m(1, methods);
+}
 
-	if (!methods) {
+struct cjrpc2_handler *cjrpc2_new_handler_m(size_t count, ...)
+{
+	va_list ap;
+	struct cjrpc2_handler *h;
+	struct cjrpc2_method *methods;
+	struct cjrpc2_method_entry *me;
+	unsigned int i, j;
+
+	if (!count) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -180,19 +188,35 @@ struct cjrpc2_handler *cjrpc2_new_handler(struct cjrpc2_method *methods)
 	if (!h->mlist_head) {
 		goto exit_free_enomem;
 	}
-
 	me = h->mlist_head;
-	me->method = &methods[0];
+	me->method = NULL;
 	me->next = NULL;
-	for (i = 1; methods[i].name; i++) {
-		me->next = (struct cjrpc2_method_entry *)malloc(sizeof(struct cjrpc2_method_entry));
-		if (!h->mlist_head) {
-			goto exit_free_enomem;
+
+	va_start(ap, count);
+	for (j = 0; j < count; j++) {
+		methods = va_arg(ap, struct cjrpc2_method *);
+		if (!methods)
+			continue;
+
+		for (i = 0; methods[i].name; i++) {
+			if (!me->method) {
+				/* populate first */
+				me->method = &methods[i];
+				me->next = NULL;
+				continue;
+			}
+
+			me->next = (struct cjrpc2_method_entry *)malloc(
+				sizeof(struct cjrpc2_method_entry));
+			if (!h->mlist_head) {
+				goto exit_free_enomem;
+			}
+			me = me->next;
+			me->method = &methods[i];
+			me->next = NULL;
 		}
-		me = me->next;
-		me->method = &methods[i];
-		me->next = NULL;
 	}
+	va_end(ap);
 
 	return h;
 
