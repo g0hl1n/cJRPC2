@@ -1,17 +1,13 @@
 name: CI
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
-      - uses: BSFishy/meson-build@v1.0.1
+      - uses: actions/checkout@v2.3.4
+      - uses: actions/setup-python@v2.2.2
+      - uses: BSFishy/meson-build@v1.0.3
         with:
           action: build
