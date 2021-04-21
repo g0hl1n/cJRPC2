@@ -14,6 +14,9 @@ cjrpc2_inc = include_directories(
   ]
 )
 
+cc = meson.get_compiler('c')
+m_dep = cc.find_library('m', required : false)
+
 cjrpc2 = static_library('cjrpc2',
   [
     'src/cJRPC2.c',
@@ -23,6 +26,9 @@ cjrpc2 = static_library('cjrpc2',
 )
 cjrpc2_dep = declare_dependency(
   link_with: cjrpc2,
+  dependencies: [
+    m_dep,
+  ],
   include_directories : cjrpc2_inc,
 )
 

@@ -4,6 +4,8 @@
 #include "cJSON/cJSON.h"
 
 #include <errno.h>
+#include <limits.h>
+#include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -313,4 +315,105 @@ exit_ret:
 	}
 	cJSON_Delete(j_req);
 	return ret;
+}
+
+enum cjrpc2_param_status cjrpc2_get_param_double(const cJSON *params, const char *name,
+						 double *value)
+{
+	cJSON *p_item;
+
+	if (!(p_item = cJSON_GetObjectItem(params, name))) {
+		return PARAM_MISSING;
+	}
+	if (!cJSON_IsNumber(p_item)) {
+		return PARAM_WRONG_TYPE;
+	}
+	*value = cJSON_GetNumberValue(p_item);
+
+	return PARAM_OK;
+}
+
+enum cjrpc2_param_status cjrpc2_get_param_double_range(const cJSON *params, const char *name,
+						       double *value, const double min,
+						       const double max)
+{
+	enum cjrpc2_param_status pstat;
+
+	if (PARAM_OK != (pstat = cjrpc2_get_param_double(params, name, value))) {
+		return pstat;
+	}
+
+	if (*value < min || *value > max) {
+		return PARAM_OO_RANGE;
+	}
+	return PARAM_OK;
+}
+
+enum cjrpc2_param_status cjrpc2_get_param_int(const cJSON *params, const char *name, int *value)
+{
+	enum cjrpc2_param_status pstat;
+
+	if (PARAM_OK !=
+	    (pstat = cjrpc2_get_param_int_range(params, name, value, INT_MIN, INT_MAX))) {
+		return pstat;
+	}
+
+	return PARAM_OK;
+}
+
+enum cjrpc2_param_status cjrpc2_get_param_int_range(const cJSON *params, const char *name,
+						    int *value, const int min, const int max)
+{
+	enum cjrpc2_param_status pstat;
+	double dval;
+
+	if (PARAM_OK != (pstat = cjrpc2_get_param_double_range(params, name, &dval, min, max))) {
+		return pstat;
+	}
+
+	if (floor(dval) != dval) {
+		return PARAM_NUM_NOINT;
+	}
+	*value = (int)dval;
+
+	return PARAM_OK;
+}
+
+enum cjrpc2_param_status cjrpc2_get_param_bool(const cJSON *params, const char *name, bool *value)
+{
+	cJSON *p_item;
+
+	if (!(p_item = cJSON_GetObjectItem(params, name))) {
+		return PARAM_MISSING;
+	}
+	if (!cJSON_IsBool(p_item)) {
+		return PARAM_WRONG_TYPE;
+	}
+	*value = cJSON_IsTrue(p_item);
+
+	return PARAM_OK;
+}
+
+enum cjrpc2_param_status cjrpc2_get_param_string(const cJSON *params, const char *name,
+						 char **value)
+{
+	cJSON *p_item;
+	char *json_str;
+	size_t value_size;
+
+	if (!(p_item = cJSON_GetObjectItem(params, name))) {
+		return PARAM_MISSING;
+	}
+	if (!cJSON_IsString(p_item)) {
+		return PARAM_WRONG_TYPE;
+	}
+	json_str = cJSON_GetStringValue(p_item);
+	value_size = strlen(json_str) + 1;
+
+	if (!(*value = (char *)malloc(value_size))) {
+		return PARAM_NOMEM;
+	}
+	strncpy(*value, json_str, value_size);
+
+	return PARAM_OK;
 }
