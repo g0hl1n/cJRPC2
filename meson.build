@@ -14,14 +14,16 @@ cjrpc2_inc = include_directories(
   ]
 )
 
+cjrpc2_src = [
+  files('src/cJRPC2.c'),
+  files('cJSON/cJSON.c'),
+]
+
 cc = meson.get_compiler('c')
 m_dep = cc.find_library('m', required : false)
 
 cjrpc2 = static_library('cjrpc2',
-  [
-    'src/cJRPC2.c',
-    'cJSON/cJSON.c',
-  ],
+  cjrpc2_src,
   include_directories : cjrpc2_inc,
 )
 cjrpc2_dep = declare_dependency(
@@ -53,3 +55,6 @@ executable('example-calc',
     cjrpc2_dep,
   ],
 )
+
+# tests
+subdir('test')

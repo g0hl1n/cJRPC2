@@ -47,10 +47,6 @@ int impl_multiply(const cJSON *params, cJSON **resp)
 	*resp = cJSON_CreateNumber(result);
 
 	return CJRPC2_RET_SUCCESS;
-	if (!params) {
-		*resp = cjrpc2_impl_resp_error(JSONRPC2_EIPARAM, "Invalid params", NULL);
-		return CJRPC2_RET_ERROR;
-	}
 }
 
 static struct cjrpc2_method methods[] = {
