@@ -1,6 +1,6 @@
 # cJRPC2
 
-Ultralightweight ANSI C 89 JSON-RPC 2.0 library based on cJSON by Dave Gamble.
+Ultralightweight C99 JSON-RPC 2.0 library based on cJSON by Dave Gamble.
 
 ## Table of contents
 * [License](#license)
