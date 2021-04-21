@@ -13,7 +13,7 @@ Ultralightweight ANSI C 89 JSON-RPC 2.0 library based on cJSON by Dave Gamble.
 
 MIT License
 
->  Copyright (c) 2020 Richard Leitner
+>  Copyright (c) 2020-2021 Richard Leitner
 >
 >  Permission is hereby granted, free of charge, to any person obtaining a copy
 >  of this software and associated documentation files (the "Software"), to deal

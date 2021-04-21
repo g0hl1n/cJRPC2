@@ -12,7 +12,7 @@
 #define CJRPC2_VERSION_MAJOR 0
 #define CJRPC2_VERSION_MINOR 0
 #define CJRPC2_VERSION_PATCH 1
-#define CJRPC2_COPYRIGHT     "Copyright (c) 2020 Richard Leitner"
+#define CJRPC2_COPYRIGHT     "Copyright (c) 2020-2021 Richard Leitner"
 #define CJRPC2_URL	     "https://github.com/g0hl1n/cJRPC2"
 
 /* fixed JSONRPC2 error codes */
