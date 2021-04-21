@@ -46,3 +46,10 @@ executable('example-multiple',
     cjrpc2_dep,
   ],
 )
+
+executable('example-calc',
+  'examples/calc.c',
+  dependencies: [
+    cjrpc2_dep,
+  ],
+)
