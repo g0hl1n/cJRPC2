@@ -2,6 +2,8 @@
 #ifndef CJRPC2__H
 #define CJRPC2__H
 
+#include <stdbool.h>
+
 #include "cJSON/cJSON.h"
 
 #define JSONRPC2_VERSION "2.0"
@@ -10,7 +12,7 @@
 #define CJRPC2_VERSION_MAJOR 0
 #define CJRPC2_VERSION_MINOR 0
 #define CJRPC2_VERSION_PATCH 1
-#define CJRPC2_COPYRIGHT     "Copyright (c) 2020 Richard Leitner"
+#define CJRPC2_COPYRIGHT     "Copyright (c) 2020-2021 Richard Leitner"
 #define CJRPC2_URL	     "https://github.com/g0hl1n/cJRPC2"
 
 /* fixed JSONRPC2 error codes */
@@ -37,6 +39,15 @@ struct cjrpc2_method_entry {
 
 struct cjrpc2_handler {
 	struct cjrpc2_method_entry *mlist_head;
+};
+
+enum cjrpc2_param_status {
+	PARAM_OK,	  /**< parameter is OK */
+	PARAM_MISSING,	  /**< parameter was missing */
+	PARAM_WRONG_TYPE, /**< parameter was present but had a wrong type */
+	PARAM_NUM_NOINT,  /**< parameter value is a number, but not an integer as requested */
+	PARAM_OO_RANGE,	  /**< parameter was present but value was out of range */
+	PARAM_NOMEM	  /**< failed to allocate memory for the parameter value */
 };
 
 /**
@@ -121,5 +132,81 @@ cJSON *cjrpc2_create_request(const char *method, cJSON *j_params, cJSON *j_id);
  * @retval errno on error
  */
 char *cjrpc2_create_request_str(const char *method, cJSON *j_params, cJSON *j_id);
+
+/**
+ * @fn
+ * @brief get a double parameter by its name from an cJRPC2 params list
+ * @param params parameter list
+ * @param name parameter to get
+ * @param value pointer to store the double value at (allocation & freeing must be done by the
+ * caller)
+ * @retval cjrpc2_param_status
+ */
+enum cjrpc2_param_status cjrpc2_get_param_double(const cJSON *params, const char *name,
+						 double *value);
+
+/**
+ * @fn
+ * @brief get an double parameter by its name from an cJRPC2 params list and check if it fits in a
+ * given range
+ * @param params parameter list
+ * @param name parameter to get
+ * @param value pointer to store the double value at (allocation & freeing must be done by the
+ * caller)
+ * @param min minimal allowed value
+ * @param max maximal allowed value
+ * @retval cjrpc2_param_status
+ */
+enum cjrpc2_param_status cjrpc2_get_param_double_range(const cJSON *params, const char *name,
+						       double *value, const double min,
+						       const double max);
+
+/**
+ * @fn
+ * @brief get an integer parameter by its name from an cJRPC2 params list
+ * @param params parameter list
+ * @param name parameter to get
+ * @param value pointer to store the integer value at (allocation & freeing must be done by the
+ * caller)
+ * @retval cjrpc2_param_status
+ */
+enum cjrpc2_param_status cjrpc2_get_param_int(const cJSON *params, const char *name, int *value);
+
+/**
+ * @fn
+ * @brief get an integer parameter by its name from an cJRPC2 params list and check if it fits in a
+ * given range
+ * @param params parameter list
+ * @param name parameter to get
+ * @param value pointer to store the integer value at (allocation & freeing must be done by the
+ * caller)
+ * @param min minimal allowed value
+ * @param max maximal allowed value
+ * @retval cjrpc2_param_status
+ */
+enum cjrpc2_param_status cjrpc2_get_param_int_range(const cJSON *params, const char *name,
+						    int *value, const int min, const int max);
+
+/**
+ * @fn
+ * @brief get an boolean parameter by its name from an cJRPC2 params list
+ * @param params parameter list
+ * @param name parameter to get
+ * @param value pointer to store the bool value at (allocation & freeing must be done by the caller)
+ * @retval cjrpc2_param_status
+ */
+enum cjrpc2_param_status cjrpc2_get_param_bool(const cJSON *params, const char *name, bool *value);
+
+/**
+ * @fn
+ * @brief get a string parameter by its name from an cJRPC2 params list
+ * @param params parameter list
+ * @param name parameter to get
+ * @param value pointer to store the NULL terminated char array at (allocated by the function,
+ * freeing must be done by the caller)
+ * @retval cjrpc2_param_status
+ */
+enum cjrpc2_param_status cjrpc2_get_param_string(const cJSON *params, const char *name,
+						 char **value);
 
 #endif

@@ -2,7 +2,7 @@ project('cjrpc2', 'c',
   license: 'MIT',
   version: '0.0.1',
   default_options: [
-    'c_std=c89',
+    'c_std=c99',
     'warning_level=3',
   ],
 )
@@ -14,15 +14,23 @@ cjrpc2_inc = include_directories(
   ]
 )
 
+cjrpc2_src = [
+  files('src/cJRPC2.c'),
+  files('cJSON/cJSON.c'),
+]
+
+cc = meson.get_compiler('c')
+m_dep = cc.find_library('m', required : false)
+
 cjrpc2 = static_library('cjrpc2',
-  [
-    'src/cJRPC2.c',
-    'cJSON/cJSON.c',
-  ],
+  cjrpc2_src,
   include_directories : cjrpc2_inc,
 )
 cjrpc2_dep = declare_dependency(
   link_with: cjrpc2,
+  dependencies: [
+    m_dep,
+  ],
   include_directories : cjrpc2_inc,
 )
 
@@ -40,3 +48,13 @@ executable('example-multiple',
     cjrpc2_dep,
   ],
 )
+
+executable('example-calc',
+  'examples/calc.c',
+  dependencies: [
+    cjrpc2_dep,
+  ],
+)
+
+# tests
+subdir('test')
