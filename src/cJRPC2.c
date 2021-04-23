@@ -12,7 +12,7 @@
 #include <string.h>
 
 /* This is a safeguard to prevent copy-pasters from using incompatible C and header files */
-#if (CJRPC2_VERSION_MAJOR != 0) || (CJRPC_VERSION_MINOR != 0) || (CJRPC2_VERSION_PATCH != 1)
+#if (CJRPC2_VERSION_MAJOR != 0) || (CJRPC_VERSION_MINOR != 0) || (CJRPC2_VERSION_PATCH != 2)
 	#error cJRPC2.h and cJRPC2.c have different versions. Make sure that both have the same.
 #endif
 

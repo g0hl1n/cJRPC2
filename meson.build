@@ -1,6 +1,6 @@
 project('cjrpc2', 'c',
   license: 'MIT',
-  version: '0.0.1',
+  version: '0.0.2',
   default_options: [
     'c_std=c99',
     'warning_level=3',
