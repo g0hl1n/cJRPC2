@@ -328,8 +328,8 @@ enum cjrpc2_param_status cjrpc2_get_param_double(const cJSON *params, const char
 	if (!cJSON_IsNumber(p_item)) {
 		return PARAM_WRONG_TYPE;
 	}
-	*value = cJSON_GetNumberValue(p_item);
 
+	*value = cJSON_GetNumberValue(p_item);
 	return PARAM_OK;
 }
 
@@ -338,27 +338,23 @@ enum cjrpc2_param_status cjrpc2_get_param_double_range(const cJSON *params, cons
 						       const double max)
 {
 	enum cjrpc2_param_status pstat;
+	double dval;
 
-	if (PARAM_OK != (pstat = cjrpc2_get_param_double(params, name, value))) {
+	if (PARAM_OK != (pstat = cjrpc2_get_param_double(params, name, &dval))) {
 		return pstat;
 	}
 
-	if (*value < min || *value > max) {
+	if (dval < min || dval > max) {
 		return PARAM_OO_RANGE;
 	}
+
+	*value = dval;
 	return PARAM_OK;
 }
 
 enum cjrpc2_param_status cjrpc2_get_param_int(const cJSON *params, const char *name, int *value)
 {
-	enum cjrpc2_param_status pstat;
-
-	if (PARAM_OK !=
-	    (pstat = cjrpc2_get_param_int_range(params, name, value, INT_MIN, INT_MAX))) {
-		return pstat;
-	}
-
-	return PARAM_OK;
+	return cjrpc2_get_param_int_range(params, name, value, INT_MIN, INT_MAX);
 }
 
 enum cjrpc2_param_status cjrpc2_get_param_int_range(const cJSON *params, const char *name,
@@ -374,8 +370,8 @@ enum cjrpc2_param_status cjrpc2_get_param_int_range(const cJSON *params, const c
 	if (floor(dval) != dval) {
 		return PARAM_NUM_NOINT;
 	}
-	*value = (int)dval;
 
+	*value = (int)dval;
 	return PARAM_OK;
 }
 
@@ -389,8 +385,8 @@ enum cjrpc2_param_status cjrpc2_get_param_bool(const cJSON *params, const char *
 	if (!cJSON_IsBool(p_item)) {
 		return PARAM_WRONG_TYPE;
 	}
-	*value = cJSON_IsTrue(p_item);
 
+	*value = cJSON_IsTrue(p_item);
 	return PARAM_OK;
 }
 
@@ -413,7 +409,7 @@ enum cjrpc2_param_status cjrpc2_get_param_string(const cJSON *params, const char
 	if (!(*value = (char *)malloc(value_size))) {
 		return PARAM_NOMEM;
 	}
-	strncpy(*value, json_str, value_size);
 
+	strncpy(*value, json_str, value_size);
 	return PARAM_OK;
 }
